@@ -32,27 +32,30 @@ while True:
             xList.append(x)
             yList.append(y)
             lmlist.append([id, x, y])
+    if lmlist:
+        if len(lmlist[0]) != 0:
 
-    if len(lmlist[0]) != 0:
+            # find value for two point of first finger and thumb
+            x1, y1 = lmlist[12][1], lmlist[12][2]
+            x2, y2 = lmlist[14][1], lmlist[14][2]
 
-        # find value for two point of first finger and thumb
-        x1, y1 = lmlist[12][1], lmlist[12][2]
-        x2, y2 = lmlist[14][1], lmlist[14][2]
+            cv2.circle(img, (x1, y1), 5, (255, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x2, y2), 5, (255, 0, 255), cv2.FILLED)
 
-        cv2.circle(img, (x1, y1), 5, (255, 0, 255), cv2.FILLED)
-        cv2.circle(img, (x2, y2), 5, (255, 0, 255), cv2.FILLED)
+            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
 
-        cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
-
-        length = math.hypot(x2 - x1, y2 - y1)
-        if length < 4.0:
-            # print("Mouth Close")
-            cv2.putText(img, f'Mouth Close', (40, 150), cv2.FONT_HERSHEY_PLAIN,
-                        3, (255, 0, 0), 3)
-        if length > 20.0:
-            # print("Mouth Open")
-            cv2.putText(img, f'Mouth Open', (40, 150), cv2.FONT_HERSHEY_PLAIN,
-                        3, (255, 0, 0), 3)
+            length = math.hypot(x2 - x1, y2 - y1)
+            if length < 8.0:
+                # print("Mouth Close")
+                cv2.putText(img, f'Mouth Close', (40, 150), cv2.FONT_HERSHEY_PLAIN,
+                            3, (255, 0, 0), 3)
+            if length > 20.0:
+                # print("Mouth Open")
+                cv2.putText(img, f'Mouth Open', (40, 150), cv2.FONT_HERSHEY_PLAIN,
+                            3, (255, 0, 0), 3)
+    else:
+        cv2.putText(img, f'Face Not Detect', (40, 150), cv2.FONT_HERSHEY_PLAIN,
+                    3, (255, 0, 0), 3)
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)
@@ -60,7 +63,7 @@ while True:
     cv2.putText(img, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN,
                 3, (255, 0, 0), 3)
     cv2.imshow("Image", img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('x'):
         break
 
 # When everything done, release the capture
