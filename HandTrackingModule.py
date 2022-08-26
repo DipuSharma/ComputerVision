@@ -3,6 +3,13 @@ import mediapipe as mp
 import time
 import math
 
+# For Face Detection
+mpDraw = mp.solutions.drawing_utils
+mpFaceMesh = mp.solutions.face_mesh
+faceMesh = mpFaceMesh.FaceMesh(max_num_faces=2)
+drawSpec = mpDraw.DrawingSpec(thickness=1, circle_radius=2)
+
+
 class handDetector():
     def __init__(self, mode=False, maxHands=2, detectionCon=0.5, modelComplexity=1, trackCon=0.5):
         self.mode = mode
@@ -35,7 +42,7 @@ class handDetector():
         xList = []
         yList = []
         bbox = []
-        self.lmlist = []
+        self.lmList = []
 
         # check wether any landmark was detected
         if self.results.multi_hand_landmarks:
@@ -51,11 +58,11 @@ class handDetector():
                 xList.append(cx)
                 yList.append(cy)
                 # print(id,cx,cy)
-                self.lmlist.append([id, cx, cy])
+                self.lmList.append([id, cx, cy])
 
                 # Draw circle for 0th landmark
                 if draw:
-                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+                    cv2.circle(img, (cx, cy), 5, (255, 0, 255), cv2.FILLED)
             xmin, xmax = min(xList), max(xList)
             ymin, ymax = min(yList), max(yList)
             bbox = xmin, ymin, xmax, ymax
@@ -63,7 +70,7 @@ class handDetector():
             if draw:
                 cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20), (bbox[2] + 20, bbox[3] + 20), (0, 255, 0), 2)
 
-        return self.lmlist, bbox
+        return self.lmList, bbox
 
     def fingersUp(self):
         fingers = []
@@ -95,7 +102,30 @@ class handDetector():
         length = math.hypot(x2 - x1, y2 - y1)
         return length, img, [x1, y1, x2, y2, cx, cy]
 
-#
+    def findFace(self, img):
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        self.results = faceMesh.process(imgRGB)
+        if self.results.multi_face_landmarks:
+            for faceLms in self.results.multi_face_landmarks:
+                mpDraw.draw_landmarks(img, faceLms, mpFaceMesh.FACEMESH_CONTOURS, drawSpec, drawSpec)
+        return img
+
+    def findFacePositions(self, img):
+        xList = []
+        yList = []
+        fmlist = []
+        if self.results.multi_face_landmarks:
+            for faceLms in self.results.multi_face_landmarks:
+                mpDraw.draw_landmarks(img, faceLms, mpFaceMesh.FACEMESH_CONTOURS, drawSpec, drawSpec)
+            for id, lm in enumerate(faceLms.landmark):
+                # print(lm)
+                ih, iw, ic = img.shape
+                x, y = int(lm.x * iw), int(lm.y * ih)
+                xList.append(x)
+                yList.append(y)
+                fmlist.append([id, x, y])
+        return fmlist
+
 # def main():
 #     # Frame rates
 #     pTime = 0

@@ -63,7 +63,7 @@ while True:
     cv2.putText(img, f'FPS: {int(fps)}', (20, 70), cv2.FONT_HERSHEY_PLAIN,
                 3, (255, 0, 0), 3)
     cv2.imshow("Image", img)
-    if cv2.waitKey(1) & 0xFF == ord('x'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 # When everything done, release the capture
