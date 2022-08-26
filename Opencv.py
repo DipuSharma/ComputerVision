@@ -53,7 +53,7 @@ while True:
     # Hand Mask Operation
     if len(lmList) != 0:
         area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) // 100
-        if 300 < area < 1500:
+        if 200 < area < 2000:
             # Find Distance b/w index finger and thumb
             length, img, lineinfo = detector.findDistance(4, 8, img)
 
@@ -81,7 +81,6 @@ while True:
             # Finger Up
             count_finger = []
             finger = detector.fingersUp()
-            print(finger)
             if finger[4] == 1:
                 count_finger.append(finger[4])
             if finger[3] == 1:
@@ -94,8 +93,9 @@ while True:
                 count_finger.append(finger[0])
 
             if len(count_finger) != 0:
-                cv2.putText(img, f'{len(count_finger)}', (800, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
-
+                cv2.putText(img, f'{len(count_finger)}', (1000, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
+            if len(count_finger) == 0:
+                cv2.putText(img, f'{len(count_finger)}', (1000, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
             # for window only
             # volume.SetMasterVolumeLevel(volPer/100, None)
 
