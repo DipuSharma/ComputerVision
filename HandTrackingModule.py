@@ -130,7 +130,7 @@ class handDetector():
             handList = []
             if len(self.results.multi_handedness) == 2:
                 # Display 'Both Hands' on the image
-                cv2.putText(img, 'Both Hands', (250, 50),
+                cv2.putText(img, 'Both Hands', (560, 50),
                             cv2.FONT_HERSHEY_COMPLEX, 0.9,
                             (0, 255, 0), 2)
                 b_hand = "Both Hand"
@@ -143,13 +143,13 @@ class handDetector():
                         'classification'][0]['label']
                     if label == 'Left':
                         # Display 'Left Hand' on left side of window
-                        cv2.putText(img, label + ' Hand', (20, 50),
+                        cv2.putText(img, label + ' Hand', (560, 50),
                                     cv2.FONT_HERSHEY_COMPLEX, 0.9,
                                     (0, 255, 0), 2)
                         handList.append(label)
                     if label == 'Right':
                         # Display 'Left Hand' on left side of window
-                        cv2.putText(img, label + ' Hand', (460, 50),
+                        cv2.putText(img, label + ' Hand', (560, 50),
                                     cv2.FONT_HERSHEY_COMPLEX,
                                     0.9, (0, 255, 0), 2)
                         handList.append(label)

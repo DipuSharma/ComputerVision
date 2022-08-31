@@ -107,9 +107,9 @@ while True:
                     count_finger.append(finger[0])
 
             if len(count_finger) != 0:
-                cv2.putText(img, f'{len(count_finger)}', (1000, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
+                cv2.putText(img, f'{len(count_finger)}', (1200, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 5)
             if len(count_finger) == 0:
-                cv2.putText(img, f'{len(count_finger)}', (1000, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
+                cv2.putText(img, f'{len(count_finger)}', (1200, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 5)
             # for window only
             # volume.SetMasterVolumeLevel(volPer/100, None)
 
@@ -132,14 +132,14 @@ while True:
             length = math.hypot(x2 - x1, y2 - y1)
             if length < 8.0:
                 # print("Mouth Close")
-                cv2.putText(img, f'Mouth Close', (30, 120), cv2.FONT_HERSHEY_PLAIN,
+                cv2.putText(img, f'Mouth Close', (560, 80), cv2.FONT_HERSHEY_PLAIN,
                             2, (255, 0, 0), 2)
             if length > 20.0:
                 # print("Mouth Open")
-                cv2.putText(img, f'Mouth Open', (30, 120), cv2.FONT_HERSHEY_PLAIN,
+                cv2.putText(img, f'Mouth Open', (560, 80), cv2.FONT_HERSHEY_PLAIN,
                             2, (255, 0, 0), 2)
     else:
-        cv2.putText(img, f'Face Not Detect', (40, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 2)
+        cv2.putText(img, f'Face Not Detect', (560, 80), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
 
     # Volume Bar Show Program
     cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 3)
