@@ -46,7 +46,9 @@ drawSpec = mpDraw.DrawingSpec(thickness=1, circle_radius=2)
 
 while True:
     success, img = cap.read()
-    img = detector.findHands(img)
+    img = cv2.flip(img, 1)
+    imghands = detector.findHands(img)
+    hand = detector.handUp(img)
     lmList, bbox = detector.findPosition(img, draw=True)
     faceimg = detector.findFace(img)
     fmList = detector.findFacePositions(img)
@@ -60,16 +62,15 @@ while True:
             # Find value for two point of first finger and thumb
             x1, y1 = lmList[4][1], lmList[4][2]
             x2, y2 = lmList[8][1], lmList[8][2]
-
             # Find Two finger center value
             cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
 
-            cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
-            cv2.circle(img, (x2, y2), 15, (255, 0, 255), cv2.FILLED)
+            cv2.circle(imghands, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
+            cv2.circle(imghands, (x2, y2), 15, (255, 0, 255), cv2.FILLED)
 
-            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
+            cv2.line(imghands, (x1, y1), (x2, y2), (255, 0, 255), 3)
             # Two finger center circle
-            cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
+            cv2.circle(imghands, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
             length = math.hypot(x2 - x1, y2 - y1)
 
@@ -78,19 +79,32 @@ while True:
             volBar = np.interp(length, [50, 300], [400, 150])
             volPer = np.interp(length, [50, 300], [0, 100])
 
-            # Finger Up
+            # Hand Up
             count_finger = []
             finger = detector.fingersUp()
-            if finger[4] == 1:
-                count_finger.append(finger[4])
-            if finger[3] == 1:
-                count_finger.append(finger[3])
-            if finger[2] == 1:
-                count_finger.append(finger[2])
-            if finger[1] == 1:
-                count_finger.append(finger[1])
-            if finger[0] == 1:
-                count_finger.append(finger[0])
+            if hand[1][0] == "Left":
+                # Finger Up
+                if finger[4] == 1:
+                    count_finger.append(finger[4])
+                if finger[3] == 1:
+                    count_finger.append(finger[3])
+                if finger[2] == 1:
+                    count_finger.append(finger[2])
+                if finger[1] == 1:
+                    count_finger.append(finger[1])
+                if finger[0] == 1:
+                    count_finger.append(finger[0])
+            if hand[1][0] == "Right":
+                if finger[4] == 1:
+                    count_finger.append(finger[4])
+                if finger[3] == 1:
+                    count_finger.append(finger[3])
+                if finger[2] == 1:
+                    count_finger.append(finger[2])
+                if finger[1] == 1:
+                    count_finger.append(finger[1])
+                if finger[0] == 0:
+                    count_finger.append(finger[0])
 
             if len(count_finger) != 0:
                 cv2.putText(img, f'{len(count_finger)}', (1000, 150), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
@@ -130,7 +144,7 @@ while True:
     # Volume Bar Show Program
     cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 3)
     cv2.rectangle(img, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
-    cv2.putText(img, f'Volume :{int(volPer)} %', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 255), 3)
+    cv2.putText(img, f'Volume :{int(volPer)} %', (40, 450), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 3)
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)

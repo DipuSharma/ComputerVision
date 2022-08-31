@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import time
 import math
+from google.protobuf.json_format import MessageToDict
 
 # For Face Detection
 mpDraw = mp.solutions.drawing_utils
@@ -22,15 +23,13 @@ class handDetector():
         self.mpDraw = mp.solutions.drawing_utils  # it gives small dots onhands total 20 landmark points
         self.tipIds = [4, 8, 12, 16, 20]
 
-    def findHands(self, img, draw=True):
+    def findHands(self, img, hand=None, draw=True):
         # Send rgb image to hands
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)  # process the frame
         #     print(results.multi_hand_landmarks)
-
         if self.results.multi_hand_landmarks:
             for handLms in self.results.multi_hand_landmarks:
-
                 if draw:
                     # Draw dots and connect them
                     self.mpDraw.draw_landmarks(img, handLms, self.mpHands.HAND_CONNECTIONS)
@@ -125,6 +124,36 @@ class handDetector():
                 yList.append(y)
                 fmlist.append([id, x, y])
         return fmlist
+
+    def handUp(self, img, hand=None):
+        if self.results.multi_hand_landmarks:
+            handList = []
+            if len(self.results.multi_handedness) == 2:
+                # Display 'Both Hands' on the image
+                cv2.putText(img, 'Both Hands', (250, 50),
+                            cv2.FONT_HERSHEY_COMPLEX, 0.9,
+                            (0, 255, 0), 2)
+                b_hand = "Both Hand"
+                handList.append(b_hand)
+            else:
+                for i in self.results.multi_handedness:
+
+                    # Return whether it is Right or Left Hand
+                    label = MessageToDict(i)[
+                        'classification'][0]['label']
+                    if label == 'Left':
+                        # Display 'Left Hand' on left side of window
+                        cv2.putText(img, label + ' Hand', (20, 50),
+                                    cv2.FONT_HERSHEY_COMPLEX, 0.9,
+                                    (0, 255, 0), 2)
+                        handList.append(label)
+                    if label == 'Right':
+                        # Display 'Left Hand' on left side of window
+                        cv2.putText(img, label + ' Hand', (460, 50),
+                                    cv2.FONT_HERSHEY_COMPLEX,
+                                    0.9, (0, 255, 0), 2)
+                        handList.append(label)
+            return img, handList
 
 # def main():
 #     # Frame rates
